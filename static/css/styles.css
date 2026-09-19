@@ -1,0 +1,92 @@
+/* Balaji Medical - Custom Styling & Print Media Rules */
+
+/* Smooth scroll & font rendering */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Hide scrollbar for category pills ribbon */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Category Chip Styles */
+.category-chip {
+    transition: all 0.2s ease-in-out;
+}
+.category-chip:hover:not(.active) {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+.category-chip.active {
+    background-color: #059669 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 6px -1px rgba(5, 150, 105, 0.25);
+}
+
+/* Medicine Card transitions */
+.medicine-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.medicine-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+/* Payment Selector Card States */
+.payment-card {
+    transition: all 0.2s ease;
+}
+.payment-card.active {
+    border-color: #059669 !important;
+    background-color: #ecfdf5 !important;
+}
+
+/* Admin Tabs */
+.admin-tab.active {
+    color: #059669;
+    border-color: #059669;
+}
+
+/* Print Invoice Styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #invoiceModal, #invoicePrintArea, #invoicePrintArea * {
+        visibility: visible;
+    }
+    #invoiceModal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+    .print\:hidden {
+        display: none !important;
+    }
+}

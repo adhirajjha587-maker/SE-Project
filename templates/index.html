@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balaji Medical - Trusted 24x7 Pharmacy & Healthcare Store</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medical: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+    <!-- 24/7 Emergency & Pharmacist Helpline Bar -->
+    <div class="bg-slate-900 text-slate-200 text-xs py-2 px-4 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center text-emerald-400 font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-2"></span>
+                    24x7 Pharmacy & Delivery
+                </span>
+                <span class="hidden sm:inline-block text-slate-400">|</span>
+                <span class="flex items-center hover:text-white transition">
+                    <i data-lucide="phone-call" class="w-3.5 h-3.5 mr-1 text-emerald-400"></i>
+                    Helpline: <strong class="ml-1 text-white">+91 98765 43210</strong>
+                </span>
+                <span class="hidden md:inline-block text-slate-400">|</span>
+                <span class="hidden md:flex items-center hover:text-white transition">
+                    <i data-lucide="siren" class="w-3.5 h-3.5 mr-1 text-rose-400"></i>
+                    Emergency Ambulance: <strong class="ml-1 text-white">108</strong>
+                </span>
+            </div>
+            <div class="flex items-center space-x-3 text-xs">
+                <span class="hidden lg:inline text-slate-400">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 inline mr-1 text-emerald-400"></i>
+                    Balaji Medical, Main Market Road
+                </span>
+                <button id="adminPortalBtn" onclick="toggleAdminPortal()" class="bg-emerald-700 hover:bg-emerald-600 text-white font-medium px-2.5 py-1 rounded transition flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                    <span id="portalToggleText">Pharmacist Admin Portal</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="bg-white sticky top-0 z-40 shadow-sm border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+            
+            <!-- Brand Logo -->
+            <a href="#" onclick="showCustomerView()" class="flex items-center space-x-3 group">
+                <div class="w-11 h-11 bg-gradient-to-tr from-emerald-600 to-teal-500 rounded-xl flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition transform">
+                    <i data-lucide="plus-square" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-2xl font-black tracking-tight text-slate-900">BALAJI</span>
+                        <span class="text-2xl font-bold tracking-tight text-emerald-600">MEDICAL</span>
+                    </div>
+                    <p class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Pharmacy & Healthcare Services</p>
+                </div>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-xl hidden md:block relative">
+                <div class="relative">
+                    <input type="text" id="searchInput" oninput="handleSearchInput()" placeholder="Search 35+ medicines, generic salts (e.g. Paracetamol, Augmentin, Insulin)..." 
+                           class="w-full pl-10 pr-10 py-2.5 bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-sm rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition shadow-inner">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3.5 top-3 text-slate-400 hover:text-slate-600">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Action Navigation -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Upload Prescription Button -->
+                <button onclick="openPrescriptionModal()" class="flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3.5 py-2 rounded-xl text-sm font-semibold transition">
+                    <i data-lucide="file-text" class="w-4 h-4 text-emerald-600"></i>
+                    <span class="hidden sm:inline">Upload Rx</span>
+                </button>
+
+                <!-- Track Orders Button -->
+                <button onclick="openOrdersModal()" class="flex items-center gap-1.5 text-slate-700 hover:text-emerald-700 hover:bg-slate-100 px-3 py-2 rounded-xl text-sm font-medium transition">
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                    <span class="hidden lg:inline">My Orders</span>
+                </button>
+
+                <!-- Cart Flyout Trigger -->
+                <button onclick="openCartDrawer()" class="relative flex items-center gap-2 bg-slate-900 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-md">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    <span id="cartCountBadge" class="bg-emerald-500 text-slate-900 font-bold text-xs px-1.5 py-0.5 rounded-full">0</span>
+                    <span class="hidden sm:inline" id="cartTotalHeader">₹0.00</span>
+                </button>
+
+                <!-- User Auth Container -->
+                <div id="authNavContainer">
+                    <button onclick="openAuthModal('login')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 px-3 py-2 rounded-xl text-sm font-semibold transition">
+                        <i data-lucide="user" class="w-4 h-4 text-slate-600"></i>
+                        <span class="hidden sm:inline">Sign In</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Search Bar -->
+        <div class="px-4 pb-3 md:hidden">
+            <div class="relative">
+                <input type="text" id="mobileSearchInput" oninput="handleMobileSearchInput()" placeholder="Search medicines & generic salts..." 
+                       class="w-full pl-9 pr-8 py-2 bg-slate-100 text-sm rounded-lg border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- CUSTOMER VIEW WRAPPER -->
+    <main id="customerView" class="flex-1">
+
+        <!-- Hero Promotional Section -->
+        <section class="bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-900 text-white py-10 px-4 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            <div class="max-w-7xl mx-auto relative z-10 grid md:grid-cols-12 gap-8 items-center">
+                <div class="md:col-span-7 space-y-4">
+                    <div class="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm">
+                        <i data-lucide="award" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        Licensed Retail & Wholesale Pharmacy #DL-20B/21B
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                        Genuine Medicines Delivered <span class="text-emerald-400">At Your Doorstep</span>.
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base max-w-xl">
+                        Order prescription drugs, chronic care medications, diagnostic devices, and OTC products from Balaji Medical with verified pharmacists on duty.
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button onclick="openPrescriptionModal()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-emerald-500/30 transition flex items-center gap-2 text-sm">
+                            <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                            Upload Doctor's Prescription
+                        </button>
+                        <a href="#catalogSection" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-5 py-2.5 rounded-xl border border-white/20 backdrop-blur-sm transition text-sm flex items-center gap-2">
+                            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                            Browse All Medicines
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Feature Highlights Card -->
+                <div class="md:col-span-5 grid grid-cols-2 gap-3.5">
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                        <div class="w-9 h-9 bg-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-300 mb-2.5">
+                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-white">100% Genuine</h4>
+                        <p class="text-xs text-slate-300 mt-0.5">Sourced directly from certified pharmaceutical companies.</p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                        <div class="w-9 h-9 bg-teal-500/20 rounded-lg flex items-center justify-center text-teal-300 mb-2.5">
+                            <i data-lucide="truck" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-white">2-Hour Delivery</h4>
+                        <p class="text-xs text-slate-300 mt-0.5">Lightning quick delivery for emergency & regular meds.</p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                        <div class="w-9 h-9 bg-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-300 mb-2.5">
+                            <i data-lucide="user-check" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-white">Pharmacist Verification</h4>
+                        <p class="text-xs text-slate-300 mt-0.5">Every Rx medicine is checked for dosage & salt safety.</p>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                        <div class="w-9 h-9 bg-teal-500/20 rounded-lg flex items-center justify-center text-teal-300 mb-2.5">
+                            <i data-lucide="percent" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-white">Flat 10-20% Off</h4>
+                        <p class="text-xs text-slate-300 mt-0.5">Save on daily chronic care & diabetes medications.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category Shortcuts Ribbon -->
+        <section class="bg-white border-b border-slate-200 py-4 shadow-sm sticky top-[69px] z-30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center space-x-2 overflow-x-auto no-scrollbar py-1" id="categoriesBar">
+                    <button onclick="filterByCategory('all')" data-cat="all" class="category-chip active flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-emerald-600 text-white shadow-sm transition">
+                        <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+                        All Medicines
+                    </button>
+                    <!-- Injected dynamically via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Active Prescription Banner (shown when a prescription is uploaded) -->
+        <div id="activePrescriptionAlert" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white flex-shrink-0">
+                        <i data-lucide="check-circle" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-emerald-900">Valid Doctor's Prescription Attached</h4>
+                        <p class="text-xs text-emerald-700" id="attachedRxInfo">Prescription #Rx-Pending uploaded. Rx medicines can now be purchased seamlessly.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="viewAttachedPrescription()" class="text-xs font-semibold text-emerald-700 bg-white border border-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition">
+                        View Rx
+                    </button>
+                    <button onclick="removeAttachedPrescription()" class="text-xs text-rose-600 hover:text-rose-800 p-1.5">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Product Catalog Section -->
+        <section id="catalogSection" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- Filters & Controls Bar -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-slate-200">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <span>Pharmacy Catalog</span>
+                        <span id="productCountBadge" class="text-xs font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full border border-slate-200">Loading...</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Showing verified medical items with active salt composition</p>
+                </div>
+
+                <!-- Secondary Filters -->
+                <div class="flex flex-wrap items-center gap-2.5 text-xs">
+                    <!-- Manufacturer / Company Filter -->
+                    <select id="companyFilter" onchange="applyFilters()" class="bg-white border border-slate-200 text-slate-700 py-1.5 px-3 rounded-lg font-medium outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 max-w-[180px]">
+                        <option value="all">All Pharma Companies</option>
+                        <!-- Injected dynamically -->
+                    </select>
+
+                    <!-- Stock Availability Filter -->
+                    <select id="stockStatusFilter" onchange="applyFilters()" class="bg-white border border-slate-200 text-slate-700 py-1.5 px-3 rounded-lg font-medium outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                        <option value="all">All Stock Status</option>
+                        <option value="in_stock">In Stock Only</option>
+                        <option value="out_of_stock">Out of Stock Only</option>
+                    </select>
+
+                    <!-- Prescription Filter -->
+                    <select id="rxFilter" onchange="applyFilters()" class="bg-white border border-slate-200 text-slate-700 py-1.5 px-3 rounded-lg font-medium outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                        <option value="">All Requirements</option>
+                        <option value="1">Rx (Prescription Required)</option>
+                        <option value="0">OTC (No Prescription)</option>
+                    </select>
+
+                    <!-- Sort Options -->
+                    <select id="sortFilter" onchange="applyFilters()" class="bg-white border border-slate-200 text-slate-700 py-1.5 px-3 rounded-lg font-medium outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                        <option value="default">Sort by: Default</option>
+                        <option value="price_asc">Price: Low to High</option>
+                        <option value="price_desc">Price: High to Low</option>
+                        <option value="name_asc">Name: A to Z</option>
+                        <option value="stock_desc">Highest Stock Units</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Medicine Product Cards Grid -->
+            <div id="medicinesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+                <!-- Medicine cards populated dynamically -->
+            </div>
+
+            <!-- Empty State / No Results -->
+            <div id="noResultsState" class="hidden text-center py-16 bg-white rounded-2xl border border-slate-200 mt-6 p-8">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mx-auto mb-4">
+                    <i data-lucide="package-x" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800">No medicines found</h3>
+                <p class="text-sm text-slate-500 mt-1 max-w-md mx-auto">We couldn't find any medications matching your filters. Try clearing your search or checking alternative salt names.</p>
+                <button onclick="resetAllFilters()" class="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+                    Reset All Filters
+                </button>
+            </div>
+        </section>
+
+        <!-- Health Advice & Emergency Assistance Banner -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mb-12">
+            <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-200 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+                <div class="space-y-2">
+                    <span class="bg-emerald-600 text-white text-[11px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md">Pharmacist On Duty</span>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-900">Need Guidance On Dosage or Drug Alternatives?</h3>
+                    <p class="text-sm text-slate-600 max-w-xl">
+                        Our registered chief pharmacist is available to answer questions about active salt combinations, pediatric doses, and potential medication interactions.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="tel:+919876543210" class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow transition">
+                        <i data-lucide="phone" class="w-4 h-4 text-emerald-400"></i>
+                        Call Balaji Medical: +91 98765 43210
+                    </a>
+                    <button onclick="openPrescriptionModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow transition">
+                        <i data-lucide="file-check" class="w-4 h-4"></i>
+                        Verify Prescription Online
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PHARMACIST ADMIN PORTAL VIEW WRAPPER (Hidden by default) -->
+    <div id="adminPortalView" class="hidden flex-1 bg-slate-100 py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto space-y-6">
+            
+            <!-- Admin Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center text-emerald-400">
+                        <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-2xl font-black text-slate-900">Balaji Medical Pharmacist Portal</h1>
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full">Live System</span>
+                        </div>
+                        <p class="text-xs text-slate-500">Authorized access for inventory restocking, order fulfillment, and Rx verification</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openAddMedicineModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm transition">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        Add New Medicine
+                    </button>
+                    <button onclick="toggleAdminPortal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-2 rounded-xl text-sm font-semibold transition">
+                        Back to Customer Shop
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Key Metric Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-semibold text-slate-500">Total Medicines</span>
+                    <h3 id="statTotalMeds" class="text-2xl font-black text-slate-900 mt-1">--</h3>
+                    <span class="text-[11px] text-emerald-600 font-medium">In active catalog</span>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-semibold text-amber-600">Low Stock (<15)</span>
+                    <h3 id="statLowStock" class="text-2xl font-black text-amber-600 mt-1">--</h3>
+                    <span class="text-[11px] text-amber-700 font-medium">Reorder required</span>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-semibold text-rose-600">Near Expiry (<60d)</span>
+                    <h3 id="statNearExpiry" class="text-2xl font-black text-rose-600 mt-1">--</h3>
+                    <span class="text-[11px] text-rose-700 font-medium">Check batch date</span>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-semibold text-slate-500">Total Orders</span>
+                    <h3 id="statTotalOrders" class="text-2xl font-black text-slate-900 mt-1">--</h3>
+                    <span class="text-[11px] text-emerald-600 font-medium">Lifetime placed</span>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-semibold text-slate-500">Total Revenue</span>
+                    <h3 id="statRevenue" class="text-2xl font-black text-slate-900 mt-1">₹0</h3>
+                    <span class="text-[11px] text-emerald-600 font-medium">Orders fulfilled</span>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs font-semibold text-indigo-600">Prescriptions</span>
+                    <h3 id="statPendingRx" class="text-2xl font-black text-indigo-600 mt-1">--</h3>
+                    <span class="text-[11px] text-indigo-700 font-medium">Pending review</span>
+                </div>
+            </div>
+
+            <!-- Admin Sub-Navigation Tabs -->
+            <div class="border-b border-slate-200 bg-white rounded-t-2xl px-6 pt-3 flex space-x-6">
+                <button onclick="switchAdminTab('inventory')" id="tabBtn-inventory" class="admin-tab active pb-3 text-sm font-bold text-emerald-600 border-b-2 border-emerald-600 flex items-center gap-2">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                    Inventory & Stock Management
+                </button>
+                <button onclick="switchAdminTab('orders')" id="tabBtn-orders" class="admin-tab pb-3 text-sm font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2">
+                    <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                    Customer Orders Management
+                </button>
+                <button onclick="switchAdminTab('prescriptions')" id="tabBtn-prescriptions" class="admin-tab pb-3 text-sm font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2">
+                    <i data-lucide="file-check" class="w-4 h-4"></i>
+                    Prescription Verification Queue
+                </button>
+            </div>
+
+            <!-- Tab 1: Inventory Table -->
+            <div id="adminPanel-inventory" class="bg-white rounded-b-2xl p-6 shadow-sm border border-slate-200 border-t-0 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="relative w-full sm:w-80">
+                        <input type="text" id="adminSearchInput" oninput="filterAdminInventory()" placeholder="Search inventory by name, salt, batch..." 
+                               class="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 outline-none focus:border-emerald-500">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5"></i>
+                    </div>
+                    <button onclick="refreshAdminInventory()" class="text-xs text-slate-600 hover:text-emerald-600 flex items-center gap-1 font-semibold">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                        Reload Inventory
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-50 text-slate-700 font-bold border-y border-slate-200">
+                            <tr>
+                                <th class="py-3 px-4">Medicine Details</th>
+                                <th class="py-3 px-3">Active Salt Formula</th>
+                                <th class="py-3 px-3">Category</th>
+                                <th class="py-3 px-3">Batch & Expiry</th>
+                                <th class="py-3 px-3">Price (MRP / Disc.)</th>
+                                <th class="py-3 px-3">Stock Units</th>
+                                <th class="py-3 px-3">Rx Req.</th>
+                                <th class="py-3 px-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminInventoryTableBody" class="divide-y divide-slate-100">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 2: Orders Table -->
+            <div id="adminPanel-orders" class="hidden bg-white rounded-b-2xl p-6 shadow-sm border border-slate-200 border-t-0 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-slate-900 text-sm">Recent Customer Orders</h3>
+                    <button onclick="loadAdminOrders()" class="text-xs text-slate-600 hover:text-emerald-600 flex items-center gap-1 font-semibold">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                        Reload Orders
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-50 text-slate-700 font-bold border-y border-slate-200">
+                            <tr>
+                                <th class="py-3 px-4">Order ID</th>
+                                <th class="py-3 px-3">Customer & Contact</th>
+                                <th class="py-3 px-3">Delivery Address</th>
+                                <th class="py-3 px-3">Payment</th>
+                                <th class="py-3 px-3">Total Amount</th>
+                                <th class="py-3 px-3">Fulfillment Status</th>
+                                <th class="py-3 px-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminOrdersTableBody" class="divide-y divide-slate-100">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: Prescriptions Table -->
+            <div id="adminPanel-prescriptions" class="hidden bg-white rounded-b-2xl p-6 shadow-sm border border-slate-200 border-t-0 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-slate-900 text-sm">Prescriptions Uploaded by Patients</h3>
+                    <button onclick="loadAdminPrescriptions()" class="text-xs text-slate-600 hover:text-emerald-600 flex items-center gap-1 font-semibold">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                        Reload Queue
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-50 text-slate-700 font-bold border-y border-slate-200">
+                            <tr>
+                                <th class="py-3 px-4">Rx ID</th>
+                                <th class="py-3 px-3">Patient Name</th>
+                                <th class="py-3 px-3">Doctor & Phone</th>
+                                <th class="py-3 px-3">Uploaded Time</th>
+                                <th class="py-3 px-3">Prescription File</th>
+                                <th class="py-3 px-3">Status</th>
+                                <th class="py-3 px-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminPrescriptionsTableBody" class="divide-y divide-slate-100">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-xs mt-auto border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-3">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-lg font-black text-white">BALAJI MEDICAL</span>
+                </div>
+                <p class="text-slate-400">
+                    Your neighborhood 24x7 pharmacy offering genuine prescription & OTC medicines, healthcare products, and digital health devices with doorstep express delivery.
+                </p>
+                <div class="text-slate-400 space-y-1 text-[11px]">
+                    <p>Drug License: <strong>DL-20B/21B-BALAJI-4421</strong></p>
+                    <p>GSTIN: <strong>07AAAAA0000A1Z5</strong></p>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-sm mb-3">Popular Categories</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" onclick="filterByCategory('pain-relief')" class="hover:text-emerald-400 transition">Pain Relief & Fever</a></li>
+                    <li><a href="#" onclick="filterByCategory('antibiotics')" class="hover:text-emerald-400 transition">Antibiotics & Anti-Infectives</a></li>
+                    <li><a href="#" onclick="filterByCategory('diabetes')" class="hover:text-emerald-400 transition">Diabetes & Metabolic Care</a></li>
+                    <li><a href="#" onclick="filterByCategory('cardiac')" class="hover:text-emerald-400 transition">Cardiac & Blood Pressure</a></li>
+                    <li><a href="#" onclick="filterByCategory('respiratory')" class="hover:text-emerald-400 transition">Respiratory & Cough Syrups</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-sm mb-3">Emergency & Support</h4>
+                <ul class="space-y-2">
+                    <li class="flex items-center gap-2">
+                        <i data-lucide="phone-call" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Helpline: +91 98765 43210</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i data-lucide="mail" class="w-4 h-4 text-emerald-400"></i>
+                        <span>care@balajimedical.com</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Shop #4-5, Medical Market, Main Road</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Open 24 Hours, 365 Days</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-sm mb-3">Medical Disclaimer</h4>
+                <p class="text-slate-400 text-[11px] leading-relaxed">
+                    Medicines labeled with an <strong>Rx</strong> tag legally require a prescription from a registered medical practitioner. Please consult a qualified doctor before starting any medication. Self-medication is hazardous to health.
+                </p>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    &copy; 2026 Balaji Medical. All Rights Reserved. Built for Software Engineering Project.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== MODALS & DRAWERS ==================== -->
+
+    <!-- 1. Medicine Details Modal -->
+    <div id="medicineDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeMedicineDetailModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div id="medicineDetailContent">
+                <!-- Dynamically loaded -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Prescription Upload Modal -->
+    <div id="prescriptionModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closePrescriptionModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <div class="flex items-center space-x-3 mb-5">
+                <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center">
+                    <i data-lucide="file-up" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Upload Doctor's Prescription</h3>
+                    <p class="text-xs text-slate-500">Attach doctor's slip for Rx medications verification</p>
+                </div>
+            </div>
+
+            <form id="prescriptionForm" onsubmit="handlePrescriptionSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Prescription Document / Image *</label>
+                    <div id="dropzone" onclick="document.getElementById('rxFileInput').click()" class="border-2 border-dashed border-emerald-300 hover:border-emerald-500 bg-emerald-50/50 rounded-2xl p-6 text-center cursor-pointer transition">
+                        <input type="file" id="rxFileInput" onchange="handleFileSelected(event)" accept="image/*,.pdf" class="hidden">
+                        <div id="dropzoneEmpty">
+                            <i data-lucide="upload-cloud" class="w-8 h-8 text-emerald-600 mx-auto mb-2"></i>
+                            <p class="text-xs font-bold text-slate-700">Click to browse or drop prescription file</p>
+                            <p class="text-[11px] text-slate-400 mt-1">Supports PNG, JPG, JPEG, WEBP or PDF (Max 16MB)</p>
+                        </div>
+                        <div id="dropzonePreview" class="hidden flex items-center justify-center gap-2 text-emerald-700 font-semibold text-xs">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                            <span id="selectedFileName">file.jpg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Patient Name *</label>
+                        <input type="text" id="rxPatientName" required placeholder="e.g. Ramesh Sharma" 
+                               class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Patient Phone</label>
+                        <input type="tel" id="rxPatientPhone" placeholder="e.g. 9876543210" 
+                               class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Doctor / Clinic Name</label>
+                    <input type="text" id="rxDoctorName" placeholder="e.g. Dr. A. K. Verma, MD" 
+                           class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Notes / Instructions</label>
+                    <textarea id="rxNotes" rows="2" placeholder="Any specific instructions regarding generic substitute or pack size..." 
+                              class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"></textarea>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="uploadRxSubmitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-600/20 text-xs transition flex items-center justify-center gap-2">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        Submit Prescription for Pharmacist Verification
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Slide-Over Cart Drawer -->
+    <div id="cartDrawer" class="hidden fixed inset-0 z-50 overflow-hidden bg-slate-900/60 backdrop-blur-sm">
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                
+                <!-- Drawer Header -->
+                <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center text-white">
+                            <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Your Medical Cart</h3>
+                            <p class="text-xs text-slate-500" id="cartDrawerItemsCount">0 items</p>
+                        </div>
+                    </div>
+                    <button onclick="closeCartDrawer()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Prescription Warning in Cart if Rx items exist -->
+                <div id="cartRxNotice" class="hidden bg-amber-50 border-b border-amber-200 p-3 text-xs text-amber-800 flex items-start gap-2">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <span class="font-bold">Prescription Required:</span> Your cart has medications marked with Rx.
+                        <button onclick="openPrescriptionModal()" class="text-emerald-700 font-bold underline ml-1">Upload Prescription</button>
+                    </div>
+                </div>
+
+                <!-- Cart Items List -->
+                <div id="cartItemsList" class="flex-1 overflow-y-auto p-5 divide-y divide-slate-100 space-y-4">
+                    <!-- Injected dynamically -->
+                </div>
+
+                <!-- Empty Cart State -->
+                <div id="emptyCartState" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center">
+                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-3">
+                        <i data-lucide="shopping-cart" class="w-8 h-8"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm">Your cart is empty</h4>
+                    <p class="text-xs text-slate-500 mt-1">Browse our medical catalog and add your needed medications.</p>
+                    <button onclick="closeCartDrawer()" class="mt-4 bg-emerald-600 text-white text-xs font-semibold px-4 py-2 rounded-lg">
+                        Browse Medicines
+                    </button>
+                </div>
+
+                <!-- Drawer Footer / Summary -->
+                <div id="cartFooter" class="p-5 border-t border-slate-200 bg-slate-50 space-y-3">
+                    <div class="space-y-1.5 text-xs">
+                        <div class="flex justify-between text-slate-600">
+                            <span>Subtotal</span>
+                            <span id="cartSubtotal" class="font-semibold text-slate-800">₹0.00</span>
+                        </div>
+                        <div class="flex justify-between text-slate-600">
+                            <span>Delivery Fee</span>
+                            <span id="cartDeliveryFee" class="font-semibold text-emerald-600">FREE</span>
+                        </div>
+                        <div class="flex justify-between text-slate-600">
+                            <span>Special Discount</span>
+                            <span id="cartDiscount" class="font-semibold text-emerald-600">-₹0.00</span>
+                        </div>
+                        <div class="flex justify-between text-sm font-black text-slate-900 pt-2 border-t border-slate-200">
+                            <span>Total Payable</span>
+                            <span id="cartGrandTotal">₹0.00</span>
+                        </div>
+                    </div>
+                    <button onclick="proceedToCheckout()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-600/20 text-xs transition flex items-center justify-center gap-2">
+                        <span>Proceed to Checkout</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Checkout Modal -->
+    <div id="checkoutModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeCheckoutModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center">
+                    <i data-lucide="credit-card" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Balaji Medical Checkout</h3>
+                    <p class="text-xs text-slate-500">Complete delivery address & payment preference</p>
+                </div>
+            </div>
+
+            <form id="checkoutForm" onsubmit="handleCheckoutSubmit(event)" class="space-y-4">
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
+                        <input type="text" id="custName" required placeholder="Patient / Customer Name" 
+                               class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Mobile Number *</label>
+                        <input type="tel" id="custPhone" required placeholder="10-digit phone number" 
+                               class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+                    <input type="email" id="custEmail" placeholder="For instant invoice copy" 
+                           class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Complete Delivery Address *</label>
+                    <textarea id="custAddress" required rows="2" placeholder="House/Flat No., Street, Landmark, Pin Code" 
+                              class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"></textarea>
+                </div>
+
+                <!-- Payment Method Selector -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Payment Method</label>
+                    <div class="grid grid-cols-3 gap-2.5">
+                        <label class="payment-card flex flex-col items-center justify-center p-3 rounded-xl border-2 border-emerald-600 bg-emerald-50/40 cursor-pointer text-center">
+                            <input type="radio" name="paymentMethod" value="Cash on Delivery" checked class="hidden">
+                            <i data-lucide="banknote" class="w-5 h-5 text-emerald-600 mb-1"></i>
+                            <span class="text-xs font-bold text-slate-800">Cash on Delivery</span>
+                            <span class="text-[10px] text-slate-500">Pay at doorstep</span>
+                        </label>
+                        
+                        <label class="payment-card flex flex-col items-center justify-center p-3 rounded-xl border-2 border-slate-200 hover:border-emerald-300 bg-white cursor-pointer text-center">
+                            <input type="radio" name="paymentMethod" value="UPI / QR Code" class="hidden">
+                            <i data-lucide="qr-code" class="w-5 h-5 text-slate-600 mb-1"></i>
+                            <span class="text-xs font-bold text-slate-800">UPI / QR</span>
+                            <span class="text-[10px] text-slate-500">GPay, PhonePe, Paytm</span>
+                        </label>
+
+                        <label class="payment-card flex flex-col items-center justify-center p-3 rounded-xl border-2 border-slate-200 hover:border-emerald-300 bg-white cursor-pointer text-center">
+                            <input type="radio" name="paymentMethod" value="Debit / Credit Card" class="hidden">
+                            <i data-lucide="credit-card" class="w-5 h-5 text-slate-600 mb-1"></i>
+                            <span class="text-xs font-bold text-slate-800">Card</span>
+                            <span class="text-[10px] text-slate-500">Visa, Mastercard, RuPay</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- UPI QR simulator box (hidden until UPI selected) -->
+                <div id="upiQrBox" class="hidden bg-slate-50 border border-slate-200 rounded-2xl p-4 text-center">
+                    <p class="text-xs font-bold text-slate-800">Scan to Pay via any UPI App</p>
+                    <div class="w-28 h-28 bg-white border-2 border-slate-300 p-2 mx-auto my-2 rounded-xl flex items-center justify-center shadow-inner">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=balajimedical@upi&pn=Balaji%20Medical" alt="UPI QR" class="w-full h-full object-contain">
+                    </div>
+                    <p class="text-[11px] font-mono text-emerald-700 font-bold">UPI ID: balajimedical@upi</p>
+                </div>
+
+                <!-- Order Summary Breakdown in Checkout -->
+                <div class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200 space-y-1 text-xs">
+                    <div class="flex justify-between font-bold text-slate-800">
+                        <span>Total Payable Amount:</span>
+                        <span id="checkoutTotalAmount" class="text-emerald-700 text-sm">₹0.00</span>
+                    </div>
+                </div>
+
+                <button type="submit" id="placeOrderSubmitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-600/20 text-xs transition flex items-center justify-center gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    Confirm Order & Generate Medical Invoice
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. Order Confirmation & Printable Invoice Modal -->
+    <div id="invoiceModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeInvoiceModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full print:hidden">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <div id="invoicePrintArea">
+                <!-- Dynamically injected printable invoice -->
+            </div>
+
+            <div class="mt-6 flex flex-wrap justify-end gap-3 print:hidden">
+                <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 transition">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    Print / Download Invoice (PDF)
+                </button>
+                <button onclick="closeInvoiceModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Customer Track Orders Modal -->
+    <div id="ordersModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeOrdersModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <div class="flex items-center space-x-3 mb-5">
+                <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center">
+                    <i data-lucide="truck" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Track Your Medical Orders</h3>
+                    <p class="text-xs text-slate-500">Enter your registered mobile number</p>
+                </div>
+            </div>
+
+            <div class="flex gap-2 mb-5">
+                <input type="tel" id="trackPhoneInput" placeholder="Enter 10-digit mobile number" 
+                       class="flex-1 text-xs p-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 outline-none">
+                <button onclick="lookupCustomerOrders()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 rounded-xl transition">
+                    Find Orders
+                </button>
+            </div>
+
+            <div id="trackedOrdersContainer" class="space-y-3 max-h-96 overflow-y-auto">
+                <p class="text-xs text-slate-400 text-center py-6">Enter phone number to view recent orders & delivery status</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Admin Add/Edit Medicine Modal -->
+    <div id="adminMedicineModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeAddMedicineModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <h3 id="adminMedModalTitle" class="text-lg font-bold text-slate-900 mb-4">Add Medicine to Balaji Medical Inventory</h3>
+
+            <form id="adminMedicineForm" onsubmit="handleSaveMedicineSubmit(event)" class="space-y-4">
+                <input type="hidden" id="adminMedId">
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Brand Name *</label>
+                        <input type="text" id="adminMedName" required placeholder="e.g. Dolo 650" 
+                               class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Generic Salt Formula *</label>
+                        <input type="text" id="adminMedGeneric" required placeholder="e.g. Paracetamol" 
+                               class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Category *</label>
+                        <select id="adminMedCategory" required class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Dosage Form *</label>
+                        <select id="adminMedDosageForm" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                            <option value="Tablet">Tablet</option>
+                            <option value="Capsule">Capsule</option>
+                            <option value="Syrup">Syrup</option>
+                            <option value="Cream">Cream / Ointment</option>
+                            <option value="Injection">Injection</option>
+                            <option value="Inhaler">Inhaler</option>
+                            <option value="Nasal Spray">Nasal Spray</option>
+                            <option value="Device">Medical Device</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Strength</label>
+                        <input type="text" id="adminMedStrength" placeholder="e.g. 650mg, 100ml" 
+                               class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">MRP Price (₹) *</label>
+                        <input type="number" step="0.01" id="adminMedPrice" required placeholder="34.00" 
+                               class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Discount Price (₹)</label>
+                        <input type="number" step="0.01" id="adminMedDiscountPrice" placeholder="30.00" 
+                               class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Stock Units *</label>
+                        <input type="number" id="adminMedStock" required placeholder="100" 
+                               class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Rx Required?</label>
+                        <select id="adminMedRx" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                            <option value="0">No (OTC)</option>
+                            <option value="1">Yes (Rx Required)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Manufacturer</label>
+                        <input type="text" id="adminMedManufacturer" placeholder="e.g. Micro Labs Ltd" 
+                               class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Batch Number</label>
+                        <input type="text" id="adminMedBatch" placeholder="e.g. DL-8821" 
+                               class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Expiry Date *</label>
+                        <input type="date" id="adminMedExpiry" required 
+                               class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Clinical Description / Indications</label>
+                    <textarea id="adminMedDesc" rows="2" placeholder="Brief clinical purpose..." 
+                              class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Dosage & Usage Instructions</label>
+                    <input type="text" id="adminMedUsage" placeholder="e.g. 1 tablet twice daily after meals" 
+                           class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                </div>
+
+                <div class="pt-2 flex justify-end gap-3">
+                    <button type="button" onclick="closeAddMedicineModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 shadow-sm">
+                        Save to Inventory
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 8. User Login & Registration Modal -->
+    <div id="authModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Brand Header -->
+            <div class="flex items-center space-x-2.5 mb-5">
+                <div class="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900" id="authModalTitle">Balaji Medical Account</h3>
+                    <p class="text-xs text-slate-500">Sign in for saved orders & prescription management</p>
+                </div>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl mb-5 text-xs font-bold">
+                <button type="button" onclick="switchAuthTab('login')" id="authTabLogin" class="py-2 rounded-lg bg-white text-slate-900 shadow-sm transition">
+                    Sign In
+                </button>
+                <button type="button" onclick="switchAuthTab('register')" id="authTabRegister" class="py-2 rounded-lg text-slate-500 hover:text-slate-800 transition">
+                    Create Account
+                </button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="name@example.com" 
+                           class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" 
+                           class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:border-emerald-500 outline-none">
+                </div>
+
+                <!-- Quick Demo Buttons -->
+                <div class="pt-1">
+                    <p class="text-[11px] font-semibold text-slate-400 mb-1.5">Quick Demo Autofill:</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="autofillDemoAuth('customer')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-semibold py-1.5 px-2 rounded-lg border border-slate-200 text-center transition">
+                            👤 Demo Customer
+                        </button>
+                        <button type="button" onclick="autofillDemoAuth('pharmacist')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-semibold py-1.5 px-2 rounded-lg border border-emerald-200 text-center transition">
+                            🏥 Demo Pharmacist
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="loginSubmitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl shadow text-xs transition flex items-center justify-center gap-2">
+                        <i data-lucide="log-in" class="w-4 h-4"></i>
+                        Sign In to Balaji Medical
+                    </button>
+                </div>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="hidden space-y-3.5">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
+                    <input type="text" id="regName" required placeholder="e.g. Adhiraj Singh" 
+                           class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Email Address *</label>
+                    <input type="email" id="regEmail" required placeholder="e.g. adhiraj@example.com" 
+                           class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
+                        <input type="tel" id="regPhone" placeholder="10-digit mobile" 
+                               class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Account Role</label>
+                        <select id="regRole" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                            <option value="customer">Patient / Customer</option>
+                            <option value="pharmacist">Pharmacist / Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Create Password *</label>
+                    <input type="password" id="regPassword" required minlength="4" placeholder="Minimum 4 characters" 
+                           class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:border-emerald-500 outline-none">
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="registerSubmitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl shadow text-xs transition flex items-center justify-center gap-2">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        Register Account
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 9. In-Stock Alternatives Modal -->
+    <div id="alternativesModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeAlternativesModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center">
+                    <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900" id="altModalTitle">In-Stock Brand Alternatives</h3>
+                    <p class="text-xs text-slate-500" id="altModalSubtitle">Identical generic salt formulation available immediately</p>
+                </div>
+            </div>
+
+            <div id="altModalNotice" class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-800 mb-4">
+                <!-- Generic explanation -->
+            </div>
+
+            <div id="alternativesList" class="space-y-3 max-h-80 overflow-y-auto">
+                <!-- Injected dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Element -->
+    <div id="toastNotification" class="hidden fixed bottom-5 right-5 z-50 bg-slate-900 text-white text-xs px-4 py-3 rounded-2xl shadow-xl border border-slate-800 flex items-center space-x-2.5 transition transform">
+        <i data-lucide="info" id="toastIcon" class="w-4 h-4 text-emerald-400"></i>
+        <span id="toastMessage">Notification message</span>
+    </div>
+
+    <!-- Main JavaScript -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
