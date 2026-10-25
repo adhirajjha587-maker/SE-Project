@@ -2,7 +2,7 @@
 BuildPulse - Database Models & Query Abstraction Layer
 """
 
-from database import get_db_connection
+from database_buildpulse import get_db_connection
 from datetime import datetime, date
 
 

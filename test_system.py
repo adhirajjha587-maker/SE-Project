@@ -5,15 +5,15 @@ Validates database queries, model methods, and all Flask HTTP routes.
 
 import unittest
 from datetime import date
-from app import app
+from app_buildpulse import app
 import models
-from database import get_db_connection, init_db
+from database_buildpulse import get_db_connection, init_db
 
 
 class BuildPulseTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        init_db(force_reseed=False)
+        init_db(force_reseed=True)
         cls.client = app.test_client()
 
     def test_01_database_connectivity_and_tables(self):
