@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Client Transparency Portal - BuildPulse CMS{% endblock %}
+{% block header_title %}Client & Stakeholder Transparency Portal{% endblock %}
+
+{% block content %}
+<div class="space-y-6 pt-2">
+
+    <!-- Search Hero Header -->
+    <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-lg border border-slate-800 relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+            <i data-lucide="building" class="w-72 h-72"></i>
+        </div>
+
+        <div class="max-w-2xl relative z-10 space-y-3">
+            <span class="px-3 py-1 rounded-full text-xs font-bold font-mono uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                Stakeholder Live Feed
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold font-heading text-white tracking-tight">
+                Real-Time Construction Site Tracker
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                Enter your unique Project Tracking Token (e.g. <span class="font-mono text-amber-400 font-bold">PRJ-2026-01</span>) to access milestone completion timelines, verified engineering sign-offs, and daily photographic progress diaries.
+            </p>
+
+            <!-- Search Bar -->
+            <form action="{{ url_for('client_portal') }}" method="GET" class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" name="code" value="{{ search_code }}" required placeholder="Enter Project Code (e.g. PRJ-2026-01, PRJ-2026-02)..." 
+                           class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950/80 border border-slate-700 text-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+                </div>
+                <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 shrink-0">
+                    <i data-lucide="locate-fixed" class="w-4 h-4"></i>
+                    <span>Track Site</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Active Search Result -->
+    {% if project %}
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 space-y-6 animate-fade-in">
+        <!-- Site Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="font-mono text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
+                        {{ project.code }}
+                    </span>
+                    <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase bg-slate-100 text-slate-700">
+                        {{ project.project_type }}
+                    </span>
+                    <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase bg-emerald-100 text-emerald-800">
+                        {{ project.status }}
+                    </span>
+                </div>
+                <h3 class="font-heading font-extrabold text-slate-900 text-2xl mt-2">
+                    {{ project.name }}
+                </h3>
+                <div class="text-xs text-slate-500 flex items-center gap-2 mt-1">
+                    <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-500"></i> {{ project.location }}</span>
+                    <span>•</span>
+                    <span>Owner / Client: <strong class="text-slate-800">{{ project.client_name }}</strong></span>
+                </div>
+            </div>
+
+            <!-- Progress Dial -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-4">
+                <div class="text-right">
+                    <span class="text-[10px] text-slate-400 font-semibold uppercase block">Verified Completion</span>
+                    <span class="text-2xl font-extrabold font-heading font-mono text-slate-900">{{ project.progress_pct }}%</span>
+                </div>
+                <div class="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-amber-500 transition-all" style="clip-path: inset(calc(100% - {{ project.progress_pct }}%) 0 0 0);"></div>
+                    <span class="relative font-bold text-xs font-mono text-slate-900 bg-white w-12 h-12 rounded-full flex items-center justify-center shadow-inner">
+                        {{ project.progress_pct }}%
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Milestone Timeline Funnel -->
+        <div>
+            <h4 class="font-heading font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+                <i data-lucide="milestone" class="w-4 h-4 text-amber-500"></i>
+                <span>Engineering Phases & Milestone Progress</span>
+            </h4>
+
+            <div class="space-y-3">
+                {% for m in milestones %}
+                <div class="p-4 rounded-xl border border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center font-bold text-xs
+                            {% if m.status == 'Completed' %}bg-emerald-500 text-white
+                            {% elif m.status == 'In Progress' %}bg-amber-500 text-slate-950
+                            {% else %}bg-slate-200 text-slate-600{% endif %}">
+                            {% if m.status == 'Completed' %}<i data-lucide="check" class="w-4 h-4"></i>
+                            {% elif m.status == 'In Progress' %}<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                            {% else %}<i data-lucide="clock" class="w-4 h-4"></i>{% endif %}
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold uppercase font-mono text-slate-500 block">{{ m.phase_name }}</span>
+                            <span class="font-bold text-slate-900 text-sm">{{ m.title }}</span>
+                            <span class="text-xs text-slate-400 block font-mono">Target Handover: {{ m.due_date | date_format }}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 self-end sm:self-center">
+                        <span class="font-mono font-bold text-slate-900 text-xs">{{ m.completion_pct }}%</span>
+                        <div class="w-28 bg-slate-200 rounded-full h-2 overflow-hidden">
+                            <div class="bg-amber-500 h-2 rounded-full" style="width: {{ m.completion_pct }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Latest Site Diary Log -->
+        {% if recent_logs %}
+        <div class="pt-4 border-t border-slate-100">
+            <h4 class="font-heading font-bold text-slate-900 text-base mb-3 flex items-center gap-2">
+                <i data-lucide="clipboard-list" class="w-4 h-4 text-emerald-600"></i>
+                <span>Recent Field Updates from Site Supervisor</span>
+            </h4>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for log in recent_logs %}
+                <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2 text-xs">
+                    <div class="flex justify-between items-center text-[11px] text-slate-500 font-mono">
+                        <span>{{ log.log_date | date_format }}</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700">{{ log.weather }} • {{ log.temp_c }}°C</span>
+                    </div>
+                    <p class="text-slate-700 leading-relaxed">{{ log.summary_of_work }}</p>
+                    <div class="text-[11px] text-slate-400 pt-1 border-t border-slate-100">
+                        Signed off by: <strong class="text-slate-700">{{ log.recorded_by }}</strong>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Showcase Public Projects Grid -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="font-heading font-bold text-slate-900 text-base">Civil Infrastructure & Project Showcase</h3>
+                <p class="text-xs text-slate-500">Select any project to inspect live client transparency telemetry</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {% for p in public_projects %}
+            <div class="p-4 rounded-xl border border-slate-200 hover:border-amber-500 transition-all flex flex-col justify-between space-y-3 bg-slate-50/50 hover:bg-white group">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono font-bold text-amber-600">{{ p.code }}</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-500">{{ p.project_type }}</span>
+                    </div>
+                    <h4 class="font-heading font-bold text-slate-900 text-sm mt-1 group-hover:text-amber-600 transition-colors">{{ p.name }}</h4>
+                    <span class="text-xs text-slate-500 block mt-1 line-clamp-2">{{ p.description }}</span>
+                </div>
+
+                <div class="pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs">
+                    <span class="font-mono font-bold text-slate-800">{{ p.progress_pct }}% Complete</span>
+                    <a href="{{ url_for('client_portal', code=p.code) }}" class="inline-flex items-center gap-1 font-bold text-amber-600 hover:text-amber-700">
+                        <span>Inspect Site</span>
+                        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+
+{% block title %}Projects Directory - BuildPulse CMS{% endblock %}
+{% block header_title %}Civil Projects Portfolio Directory{% endblock %}
+
+{% block content %}
+<div class="space-y-6 pt-2">
+
+    <!-- Top Action & Filter Bar -->
+    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+        
+        <!-- Search and Filters Form -->
+        <form action="{{ url_for('projects_list') }}" method="GET" class="flex flex-1 flex-wrap items-center gap-3">
+            <!-- Search Input -->
+            <div class="relative flex-1 min-w-[220px]">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" name="search" value="{{ search_query }}" placeholder="Search by name, site code, location..." 
+                       class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all">
+            </div>
+
+            <!-- Type Filter -->
+            <select name="type" onchange="this.form.submit()" class="text-xs rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-slate-700 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                <option value="All" {% if current_type == 'All' %}selected{% endif %}>All Project Types</option>
+                <option value="Commercial" {% if current_type == 'Commercial' %}selected{% endif %}>Commercial</option>
+                <option value="Residential" {% if current_type == 'Residential' %}selected{% endif %}>Residential</option>
+                <option value="Infrastructure" {% if current_type == 'Infrastructure' %}selected{% endif %}>Infrastructure</option>
+                <option value="Industrial" {% if current_type == 'Industrial' %}selected{% endif %}>Industrial</option>
+            </select>
+
+            <!-- Status Filter -->
+            <select name="status" onchange="this.form.submit()" class="text-xs rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-slate-700 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                <option value="All" {% if current_status == 'All' %}selected{% endif %}>All Statuses</option>
+                <option value="In Progress" {% if current_status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                <option value="Planning" {% if current_status == 'Planning' %}selected{% endif %}>Planning</option>
+                <option value="Completed" {% if current_status == 'Completed' %}selected{% endif %}>Completed</option>
+                <option value="On Hold" {% if current_status == 'On Hold' %}selected{% endif %}>On Hold</option>
+            </select>
+
+            <button type="submit" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-semibold transition-colors">
+                Filter
+            </button>
+            {% if search_query or current_status != 'All' or current_type != 'All' %}
+            <a href="{{ url_for('projects_list') }}" class="text-xs text-rose-600 hover:underline">Reset</a>
+            {% endif %}
+        </form>
+
+        <!-- New Project Trigger -->
+        <button onclick="toggleNewProjectModal()" class="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-sm transition-all shrink-0">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Initiate Project Site</span>
+        </button>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% if projects %}
+            {% for p in projects %}
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md hover:border-amber-500/80 transition-all flex flex-col justify-between overflow-hidden group">
+                <!-- Cover Banner -->
+                <div class="h-44 relative bg-slate-900 overflow-hidden">
+                    <img src="{{ p.banner_url }}" alt="{{ p.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent"></div>
+                    
+                    <div class="absolute top-3.5 left-3.5 flex items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-md text-[11px] font-bold font-mono uppercase tracking-wider bg-slate-900/90 text-amber-400 border border-amber-500/40 backdrop-blur-sm shadow-sm">
+                            {{ p.code }}
+                        </span>
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-white/90 text-slate-900 backdrop-blur-sm">
+                            {{ p.project_type }}
+                        </span>
+                    </div>
+
+                    <div class="absolute top-3.5 right-3.5">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
+                            {% if p.status == 'In Progress' %}bg-emerald-500 text-white
+                            {% elif p.status == 'Planning' %}bg-blue-500 text-white
+                            {% elif p.status == 'Completed' %}bg-slate-700 text-white
+                            {% else %}bg-amber-500 text-slate-950{% endif %}">
+                            {{ p.status }}
+                        </span>
+                    </div>
+
+                    <div class="absolute bottom-3 left-3.5 right-3.5 text-white">
+                        <div class="text-xs text-slate-300 flex items-center gap-1.5 font-medium">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400 shrink-0"></i>
+                            <span class="truncate">{{ p.location }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Content -->
+                <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Client: {{ p.client_name }}</div>
+                        <h3 class="font-heading font-bold text-slate-900 text-base mt-0.5 group-hover:text-amber-600 transition-colors">
+                            {{ p.name }}
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">
+                            {{ p.description }}
+                        </p>
+                    </div>
+
+                    <!-- Timeline & Leadership -->
+                    <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-100">
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase block font-semibold">Lead Engineer</span>
+                            <span class="font-medium text-slate-800 truncate block">{{ p.manager_name }}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase block font-semibold">Target Finish</span>
+                            <span class="font-medium text-slate-800 font-mono">{{ p.target_completion | date_format }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar & Budget Info -->
+                    <div class="space-y-2 pt-1">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-slate-500 font-medium">Progress Completion</span>
+                            <span class="font-mono font-bold text-slate-900">{{ p.progress_pct }}%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                            <div class="bg-gradient-to-r from-amber-500 to-amber-600 h-2.5 rounded-full" style="width: {{ p.progress_pct }}%"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                            <span>Disbursed: <strong class="text-slate-900 font-mono">{{ p.current_spend | currency_compact }}</strong></span>
+                            <span>Budget: <strong class="text-slate-900 font-mono">{{ p.total_budget | currency_compact }}</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <a href="{{ url_for('project_report', project_id=p.id) }}" target="_blank" class="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors text-xs flex items-center gap-1" title="Print Executive Summary">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">Report</span>
+                        </a>
+
+                        <a href="{{ url_for('project_detail', project_id=p.id) }}" class="flex-1 inline-flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-sm">
+                            <span>Command Center</span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-amber-400"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-span-full py-12 text-center bg-white rounded-2xl border border-slate-200">
+                <i data-lucide="folder-search" class="w-12 h-12 mx-auto text-slate-300 mb-3"></i>
+                <h4 class="font-heading font-bold text-slate-800 text-base">No matching projects found</h4>
+                <p class="text-xs text-slate-500 mt-1">Try adjusting your keyword search or category filters.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- Initiate New Project Modal -->
+<div id="newProjectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 my-8">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center font-bold">
+                    <i data-lucide="building-2" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="font-heading font-bold text-slate-900 text-lg">Initiate New Construction Site</h3>
+                    <p class="text-xs text-slate-500">Commission a civil, residential, or infrastructure project</p>
+                </div>
+            </div>
+            <button onclick="toggleNewProjectModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <form action="{{ url_for('project_create') }}" method="POST" class="space-y-4 mt-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Project Code</label>
+                    <input type="text" name="code" placeholder="e.g. PRJ-2026-06 (Auto if blank)" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-mono">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Project Type *</label>
+                    <select name="project_type" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                        <option value="Commercial">Commercial (Towers, Malls, Hospitals)</option>
+                        <option value="Residential">Residential (Villas, Apartments, Housing)</option>
+                        <option value="Infrastructure">Infrastructure (Bridges, Metro, Highways)</option>
+                        <option value="Industrial">Industrial (Warehouses, Factories, Plants)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Project Title *</label>
+                <input type="text" name="name" required placeholder="e.g. Skyline Central Convention Center" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Client / Owner Entity *</label>
+                    <input type="text" name="client_name" required placeholder="e.g. Metro Urban Realty Group" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Lead Project Manager / Engineer *</label>
+                    <input type="text" name="manager_name" required placeholder="e.g. Er. Sameer Kulkarni, PE" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Site Physical Location *</label>
+                <input type="text" name="location" required placeholder="e.g. Plot 14, Tech Boulevard, Sector 62" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Start Date *</label>
+                    <input type="date" name="start_date" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-mono">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Target Completion *</label>
+                    <input type="date" name="target_completion" required class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-mono">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Total Budget ($) *</label>
+                    <input type="number" step="1000" name="total_budget" required placeholder="e.g. 25000000" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-mono">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Initial Status</label>
+                    <select name="status" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                        <option value="In Progress">In Progress (Active)</option>
+                        <option value="Planning">Planning</option>
+                        <option value="On Hold">On Hold</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Banner Image URL</label>
+                    <input type="url" name="banner_url" placeholder="https://images.unsplash.com/..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Project Scope & Specifications</label>
+                <textarea name="description" rows="3" placeholder="Brief technical summary, floor count, structural specs, square footage..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onclick="toggleNewProjectModal()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-amber-400 font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl transition-all shadow-sm">
+                    Create & Launch Site
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleNewProjectModal() {
+        const modal = document.getElementById('newProjectModal');
+        modal.classList.toggle('hidden');
+    }
+
+    // Auto open modal if URL has hash #new
+    if (window.location.hash === '#new') {
+        toggleNewProjectModal();
+    }
+</script>
+{% endblock %}

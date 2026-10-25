@@ -1,0 +1,139 @@
+/* 
+ * Custom Styles for Staff Hiring Management System (TalentPulse)
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Modal Transitions */
+.modal-backdrop {
+    background-color: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(4px);
+    transition: opacity 0.25s ease-out;
+}
+
+/* Status Badges */
+.badge-applied {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+.badge-screening {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+.badge-interview {
+    background-color: #e0e7ff;
+    color: #3730a3;
+    border: 1px solid #c7d2fe;
+}
+.badge-offer {
+    background-color: #fae8ff;
+    color: #86198f;
+    border: 1px solid #f5d0fe;
+}
+.badge-hired {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+.badge-rejected {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+/* Step Progress Indicator for Application Tracking */
+.step-item {
+    position: relative;
+    flex: 1;
+    text-align: center;
+}
+.step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    width: 100%;
+    height: 3px;
+    background-color: #e2e8f0;
+    z-index: 1;
+}
+.step-item.completed:not(:last-child)::after {
+    background-color: #4f46e5;
+}
+.step-circle {
+    position: relative;
+    z-index: 2;
+    width: 42px;
+    height: 42px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border: 2px solid #cbd5e1;
+    color: #64748b;
+    font-weight: 700;
+}
+.step-item.active .step-circle {
+    border-color: #4f46e5;
+    background-color: #4f46e5;
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+}
+.step-item.completed .step-circle {
+    border-color: #10b981;
+    background-color: #10b981;
+    color: #fff;
+}
+
+/* Formal Offer Letter Printable Stylesheet */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #printableOfferArea, #printableOfferArea * {
+        visibility: visible;
+    }
+    #printableOfferArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    .no-print {
+        display: none !important;
+    }
+}

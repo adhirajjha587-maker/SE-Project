@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}Daily Site Diary - BuildPulse CMS{% endblock %}
+{% block header_title %}Civil Field Logs & Daily Site Diary{% endblock %}
+
+{% block content %}
+<div class="space-y-6 pt-2">
+
+    <!-- Top Action & Filter Bar -->
+    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        
+        <!-- Filter Form -->
+        <form action="{{ url_for('site_logs_list') }}" method="GET" class="flex items-center gap-3">
+            <select name="project_id" onchange="this.form.submit()" class="text-xs rounded-xl border border-slate-200 bg-slate-50 py-2 px-3 text-slate-700">
+                <option value="All">All Construction Sites</option>
+                {% for p in projects %}
+                <option value="{{ p.id }}" {% if current_project_id == p.id %}selected{% endif %}>{{ p.code }} - {{ p.name }}</option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <button onclick="toggleNewLogModal()" class="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-sm transition-all shrink-0">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Log Daily Site Report</span>
+        </button>
+    </div>
+
+    <!-- Logs Stream -->
+    <div class="space-y-4">
+        {% if logs %}
+            {% for log in logs %}
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 space-y-3 hover:border-amber-400 transition-all">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                            <i data-lucide="calendar" class="w-4 h-4"></i>
+                        </span>
+                        <div>
+                            <span class="font-heading font-bold text-slate-900 text-sm">
+                                <a href="{{ url_for('project_detail', project_id=log.project_id, tab='logs') }}" class="hover:text-amber-600 hover:underline">
+                                    {{ log.project_name }} ({{ log.project_code }})
+                                </a>
+                            </span>
+                            <div class="text-[11px] text-slate-400 font-mono">{{ log.log_date | date_format }}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 text-xs">
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-mono text-[11px] border border-slate-200 flex items-center gap-1.5">
+                            <i data-lucide="cloud-sun" class="w-3.5 h-3.5 text-amber-500"></i>
+                            <span>{{ log.weather }} • {{ log.temp_c }}°C</span>
+                        </span>
+
+                        <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-mono text-[11px] border border-blue-100 flex items-center gap-1.5">
+                            <i data-lucide="users" class="w-3.5 h-3.5 text-blue-500"></i>
+                            <span>Manpower: <strong>{{ log.manpower_count }}</strong></span>
+                        </span>
+                    </div>
+                </div>
+
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    {{ log.summary_of_work }}
+                </p>
+
+                {% if log.delays_or_issues %}
+                <div class="text-xs text-amber-800 bg-amber-50/80 p-3 rounded-xl border border-amber-200/70 flex items-center gap-2">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0"></i>
+                    <span><strong>Roadblocks & Delays:</strong> {{ log.delays_or_issues }}</span>
+                </div>
+                {% endif %}
+
+                <div class="pt-2 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
+                    <span>Supervisor on Duty: <strong class="text-slate-700">{{ log.recorded_by }}</strong></span>
+                    <span class="font-mono text-slate-400">Timestamp: {{ log.created_at }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="py-12 text-center bg-white rounded-2xl border border-slate-200">
+                <i data-lucide="clipboard-x" class="w-12 h-12 mx-auto text-slate-300 mb-2"></i>
+                <h4 class="font-bold text-slate-800 text-sm">No site logs recorded for this filter</h4>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- Modal: New Daily Log -->
+<div id="newLogModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
+        <div class="flex items-center justify-between pb-3 border-b">
+            <h3 class="font-heading font-bold text-slate-900 text-base">Record Daily Site Progress Diary</h3>
+            <button onclick="toggleNewLogModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <form action="{{ url_for('site_log_create') }}" method="POST" class="space-y-4 mt-4 text-xs">
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Target Project Site *</label>
+                <select name="project_id" required class="w-full p-2.5 rounded-xl border border-slate-300">
+                    {% for p in projects %}
+                    <option value="{{ p.id }}">{{ p.code }} - {{ p.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Log Date</label>
+                    <input type="date" name="log_date" required class="w-full p-2 rounded-xl border border-slate-300 font-mono">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Weather Condition</label>
+                    <select name="weather" class="w-full p-2 rounded-xl border border-slate-300">
+                        <option value="Sunny">Sunny</option>
+                        <option value="Clear">Clear</option>
+                        <option value="Overcast">Overcast</option>
+                        <option value="Rainy">Rainy</option>
+                        <option value="Windy">Windy</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Manpower Count</label>
+                    <input type="number" name="manpower_count" required value="40" class="w-full p-2 rounded-xl border border-slate-300 font-mono">
+                </div>
+            </div>
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Summary of Work Executed Today *</label>
+                <textarea name="summary_of_work" required rows="3" placeholder="Concrete casting completed, reinforcement ties inspected, rebar delivery received..." class="w-full p-2.5 rounded-xl border border-slate-300"></textarea>
+            </div>
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Delays, Blockers, or Weather Stoppages</label>
+                <input type="text" name="delays_or_issues" placeholder="None, or explain delay..." class="w-full p-2.5 rounded-xl border border-slate-300">
+            </div>
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Supervisor On Duty *</label>
+                <input type="text" name="recorded_by" required placeholder="e.g. Er. Vikram Sharma" class="w-full p-2.5 rounded-xl border border-slate-300">
+            </div>
+            <div class="flex justify-end gap-2 pt-3 border-t">
+                <button type="button" onclick="toggleNewLogModal()" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100">Cancel</button>
+                <button type="submit" class="bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-xl">Save Diary Log</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleNewLogModal() { document.getElementById('newLogModal').classList.toggle('hidden'); }
+    if (window.location.hash === '#new') toggleNewLogModal();
+</script>
+{% endblock %}

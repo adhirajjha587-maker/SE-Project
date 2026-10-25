@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BuildPulse - Construction Management System{% endblock %}</title>
+    
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309'
+                        },
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        heading: ['"Space Grotesk"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+</head>
+<body class="h-full flex flex-col font-sans text-slate-800 antialiased selection:bg-amber-500 selection:text-white">
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden flex items-center justify-between bg-slate-900 text-white px-4 py-3 border-b border-slate-800 sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-950 shadow-md">
+                <i data-lucide="hard-hat" class="w-5 h-5 text-slate-950"></i>
+            </div>
+            <div>
+                <span class="font-heading font-bold text-lg tracking-tight">BUILDPULSE</span>
+                <span class="text-[10px] text-amber-400 block -mt-1 font-mono uppercase tracking-wider">CMS v2.6</span>
+            </div>
+        </div>
+        <button id="mobileMenuBtn" class="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white focus:outline-none">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+    </div>
+
+    <div class="flex-1 flex overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="hidden lg:flex flex-col w-64 bg-slate-900 text-slate-300 border-r border-slate-800 shrink-0 z-40 transition-all duration-300">
+            <!-- Brand Logo -->
+            <div class="h-16 flex items-center px-6 gap-3 border-b border-slate-800/80 bg-slate-950/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-slate-950 shadow-lg shadow-amber-500/20">
+                    <i data-lucide="hard-hat" class="w-6 h-6 stroke-[2.2]"></i>
+                </div>
+                <div>
+                    <h1 class="font-heading font-extrabold text-xl tracking-tight text-white flex items-center gap-1.5">
+                        BUILDPULSE
+                    </h1>
+                    <span class="text-[11px] font-mono text-amber-400 uppercase tracking-wider font-semibold">Construction OS</span>
+                </div>
+            </div>
+
+            <!-- Active Sites Banner -->
+            <div class="px-5 py-3 mx-3 my-3 rounded-xl bg-slate-800/60 border border-slate-700/50 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-xs font-medium text-slate-300">Active Sites</span>
+                </div>
+                <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 font-mono">
+                    {{ global_kpis.active_projects }} LIVE
+                </span>
+            </div>
+
+            <!-- Nav Links -->
+            <nav class="flex-1 px-3 space-y-1 overflow-y-auto custom-scrollbar py-2 text-sm">
+                <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-3 mb-1.5">Operations</div>
+                
+                <a href="{{ url_for('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'dashboard' %}bg-amber-500 text-slate-950 font-bold shadow-sm{% else %}hover:bg-slate-800 hover:text-white text-slate-300{% endif %}">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="{{ url_for('projects_list') }}" class="flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'projects' %}bg-amber-500 text-slate-950 font-bold shadow-sm{% else %}hover:bg-slate-800 hover:text-white text-slate-300{% endif %}">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="building-2" class="w-4 h-4 shrink-0"></i>
+                        <span>Projects</span>
+                    </div>
+                    <span class="text-xs font-mono px-1.5 py-0.5 rounded {% if active_page == 'projects' %}bg-slate-950/20 text-slate-950{% else %}bg-slate-800 text-slate-400{% endif %}">
+                        {{ global_projects|length }}
+                    </span>
+                </a>
+
+                <a href="{{ url_for('materials_list') }}" class="flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'materials' %}bg-amber-500 text-slate-950 font-bold shadow-sm{% else %}hover:bg-slate-800 hover:text-white text-slate-300{% endif %}">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="boxes" class="w-4 h-4 shrink-0"></i>
+                        <span>Materials & Stock</span>
+                    </div>
+                    {% if global_kpis.low_stock_count > 0 %}
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-rose-500 text-white font-mono animate-bounce">
+                        {{ global_kpis.low_stock_count }} Low
+                    </span>
+                    {% endif %}
+                </a>
+
+                <a href="{{ url_for('equipment_list') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'equipment' %}bg-amber-500 text-slate-950 font-bold shadow-sm{% else %}hover:bg-slate-800 hover:text-white text-slate-300{% endif %}">
+                    <i data-lucide="truck" class="w-4 h-4 shrink-0"></i>
+                    <span>Heavy Machinery</span>
+                </a>
+
+                <a href="{{ url_for('workforce_list') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'workforce' %}bg-amber-500 text-slate-950 font-bold shadow-sm{% else %}hover:bg-slate-800 hover:text-white text-slate-300{% endif %}">
+                    <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
+                    <span>Workforce & Subs</span>
+                </a>
+
+                <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-3 pt-4 mb-1.5">Site Control & HSE</div>
+
+                <a href="{{ url_for('site_logs_list') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'site_logs' %}bg-amber-500 text-slate-950 font-bold shadow-sm{% else %}hover:bg-slate-800 hover:text-white text-slate-300{% endif %}">
+                    <i data-lucide="clipboard-list" class="w-4 h-4 shrink-0"></i>
+                    <span>Daily Site Diary</span>
+                </a>
+
+                <a href="{{ url_for('safety_list') }}" class="flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'safety' %}bg-amber-500 text-slate-950 font-bold shadow-sm{% else %}hover:bg-slate-800 hover:text-white text-slate-300{% endif %}">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="shield-alert" class="w-4 h-4 shrink-0"></i>
+                        <span>HSE & Safety</span>
+                    </div>
+                    {% if global_kpis.open_incidents_count > 0 %}
+                    <span class="text-xs px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-mono">
+                        {{ global_kpis.open_incidents_count }}
+                    </span>
+                    {% endif %}
+                </a>
+
+                <a href="{{ url_for('financials_view') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'financials' %}bg-amber-500 text-slate-950 font-bold shadow-sm{% else %}hover:bg-slate-800 hover:text-white text-slate-300{% endif %}">
+                    <i data-lucide="dollar-sign" class="w-4 h-4 shrink-0"></i>
+                    <span>Budget & Financials</span>
+                </a>
+
+                <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-3 pt-4 mb-1.5">Public & External</div>
+
+                <a href="{{ url_for('client_portal') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors {% if active_page == 'client_portal' %}bg-amber-500 text-slate-950 font-bold shadow-sm{% else %}hover:bg-slate-800 hover:text-white text-slate-300{% endif %}">
+                    <i data-lucide="external-link" class="w-4 h-4 shrink-0 text-amber-400"></i>
+                    <span>Client Portal</span>
+                </a>
+            </nav>
+
+            <!-- User / Station Info -->
+            <div class="p-4 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 font-bold text-sm">
+                        HQ
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-white leading-tight">Master Controller</div>
+                        <div class="text-[11px] text-slate-400">Civil & Infra Div</div>
+                    </div>
+                </div>
+                <div class="text-emerald-400" title="System Online">
+                    <i data-lucide="activity" class="w-4 h-4"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
+            
+            <!-- Top Navbar -->
+            <header class="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between shrink-0 shadow-sm z-30">
+                <div class="flex items-center gap-4">
+                    <h2 class="text-lg sm:text-xl font-bold font-heading text-slate-900 tracking-tight">
+                        {% block header_title %}Operations Command Center{% endblock %}
+                    </h2>
+                    <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
+                        <span>HQ Control Center</span>
+                    </span>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center gap-3">
+                    <!-- Project Selector Dropdown -->
+                    <div class="hidden sm:block relative">
+                        <select onchange="if(this.value) window.location.href='/projects/' + this.value" class="text-xs bg-slate-50 border border-slate-300 text-slate-700 rounded-lg px-3 py-2 pr-8 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 appearance-none cursor-pointer">
+                            <option value="">Jump to Site...</option>
+                            {% for p in global_projects %}
+                            <option value="{{ p.id }}">{{ p.code }} - {{ p.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                    </div>
+
+                    <!-- Quick Action Trigger Button -->
+                    <button onclick="toggleQuickActionModal()" class="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-amber-400 font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg transition-all shadow-sm border border-slate-800">
+                        <i data-lucide="plus-circle" class="w-4 h-4 text-amber-400"></i>
+                        <span class="hidden sm:inline">Quick Action</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Flash Notifications -->
+            <div class="px-4 sm:px-6 pt-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="flex items-center justify-between p-3.5 mb-3 rounded-xl border text-sm shadow-sm transition-all animate-fade-in
+                            {% if category == 'success' %}bg-emerald-50 border-emerald-200 text-emerald-800
+                            {% elif category == 'warning' %}bg-amber-50 border-amber-200 text-amber-800
+                            {% elif category == 'danger' %}bg-rose-50 border-rose-200 text-rose-800
+                            {% else %}bg-blue-50 border-blue-200 text-blue-800{% endif %}">
+                            <div class="flex items-center gap-2.5">
+                                {% if category == 'success' %}<i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i>
+                                {% elif category == 'warning' %}<i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600"></i>
+                                {% elif category == 'danger' %}<i data-lucide="alert-octagon" class="w-5 h-5 text-rose-600"></i>
+                                {% else %}<i data-lucide="info" class="w-5 h-5 text-blue-600"></i>{% endif %}
+                                <span class="font-medium">{{ message }}</span>
+                            </div>
+                            <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Scrollable Content Canvas -->
+            <main class="flex-1 overflow-y-auto px-4 sm:px-6 pb-12 custom-scrollbar">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Quick Action Central Modal -->
+    <div id="quickActionModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 transform transition-all">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center font-bold">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                    </div>
+                    <h3 class="text-base font-bold font-heading text-slate-900">Operations Fast Dispatch</h3>
+                </div>
+                <button onclick="toggleQuickActionModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <p class="text-xs text-slate-500 mt-2">Instantly execute common civil site actions across projects:</p>
+
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                <a href="{{ url_for('projects_list') }}#new" onclick="toggleQuickActionModal()" class="p-3.5 rounded-xl border border-slate-200 hover:border-amber-500 hover:bg-amber-50/50 flex flex-col gap-1.5 transition-all group">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i data-lucide="building-2" class="w-4 h-4"></i>
+                    </div>
+                    <span class="text-xs font-bold text-slate-900">New Project Site</span>
+                    <span class="text-[11px] text-slate-500">Initiate civil project</span>
+                </a>
+
+                <a href="{{ url_for('materials_list', tab='requisitions') }}#new" onclick="toggleQuickActionModal()" class="p-3.5 rounded-xl border border-slate-200 hover:border-amber-500 hover:bg-amber-50/50 flex flex-col gap-1.5 transition-all group">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i data-lucide="boxes" class="w-4 h-4"></i>
+                    </div>
+                    <span class="text-xs font-bold text-slate-900">Material Requisition</span>
+                    <span class="text-[11px] text-slate-500">Request cement, steel, sand</span>
+                </a>
+
+                <a href="{{ url_for('site_logs_list') }}#new" onclick="toggleQuickActionModal()" class="p-3.5 rounded-xl border border-slate-200 hover:border-amber-500 hover:bg-amber-50/50 flex flex-col gap-1.5 transition-all group">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                    </div>
+                    <span class="text-xs font-bold text-slate-900">Daily Site Diary</span>
+                    <span class="text-[11px] text-slate-500">Log weather, manpower, work</span>
+                </a>
+
+                <a href="{{ url_for('safety_list') }}#new" onclick="toggleQuickActionModal()" class="p-3.5 rounded-xl border border-slate-200 hover:border-amber-500 hover:bg-amber-50/50 flex flex-col gap-1.5 transition-all group">
+                    <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i data-lucide="alert-octagon" class="w-4 h-4"></i>
+                    </div>
+                    <span class="text-xs font-bold text-slate-900">Report Safety Hazard</span>
+                    <span class="text-[11px] text-slate-500">Log near-miss / HSE ticket</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Quick action modal toggle
+        function toggleQuickActionModal() {
+            const modal = document.getElementById('quickActionModal');
+            modal.classList.toggle('hidden');
+        }
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        if (mobileMenuBtn && sidebar) {
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('fixed');
+                sidebar.classList.toggle('inset-y-0');
+                sidebar.classList.toggle('left-0');
+            });
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
